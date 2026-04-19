@@ -13,4 +13,8 @@ Provide any technical details about the changes that you've made that aren't cov
 What types of testing have you performed on these changes?
 
 ## Backwards Compatibility
-Is there potential for these changes to break existing behaviors that people might rely on? What considerations did you take to evaluate those? If there are any, what steps did you take to prevent breakage?
+Is there potential for these changes to break existing behaviors that people might rely on? What considerations did you take to evaluate those?
+
+If there are any, what steps did you take to prevent breakage?
+
+"These changes are not expected to break anything" is an acceptable answer when it's truthful.
