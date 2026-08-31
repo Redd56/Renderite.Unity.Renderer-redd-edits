@@ -86,4 +86,4 @@ jobs:
         run: unity auth
 
       - name: 'Build Unity Runtime'
-        run: ${{ steps.unity-setup.outputs.unity-editor-path }} -quit -batchmode -nographics -projectPath UnityRuntime/ -buildTarget StandaloneWindows64 -executeMethod AppBuilder.BuildWindows
+        run: /home/runner/Unity/Hub/Editor/2019.4.19f1/Editor/Unity -quit -batchmode -nographics -projectPath UnityRuntime/ -buildTarget StandaloneWindows64 -executeMethod AppBuilder.BuildWindows
