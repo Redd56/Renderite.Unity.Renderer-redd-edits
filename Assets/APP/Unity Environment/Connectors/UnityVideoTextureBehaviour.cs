@@ -77,9 +77,15 @@ public class UnityVideoTextureBehavior : MonoBehaviour, IVideoPlaybackInstance
 
     bool playing;
 
-    public IEnumerator Setup(VideoTextureAsset asset, string dataSource, int audioSystemSampleRate)
+    public IEnumerator Setup(VideoTextureAsset asset, string dataSource, string additionalSource, int audioSystemSampleRate)
     {
-        Debug.Log("Preparing UnityVideoTexture: " + dataSource + $", AssetId: {asset.AssetId}");
+        Debug.Log($"Preparing UnityVideoTexture: {dataSource} (Additional: {additionalSource}), AssetId: {asset.AssetId}");
+
+        if (!string.IsNullOrEmpty(additionalSource))
+        {
+            Debug.LogWarning("UnityVideoTexture does not support additional source");
+            yield break;
+        }
 
         try
         {
