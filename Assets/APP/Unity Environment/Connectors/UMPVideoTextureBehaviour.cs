@@ -133,9 +133,6 @@ public class UMPVideoTextureBehaviour : MonoBehaviour, IVideoPlaybackInstance
     {
         PlayerOptions options = new PlayerOptions(null);
 
-        if(!string.IsNullOrEmpty(additionalSource))
-            options.SetValue("--input-slave", additionalSource);
-
         switch (UMPSettings.RuntimePlatform)
         {
             case UMPSettings.Platforms.Win:
@@ -199,6 +196,9 @@ public class UMPVideoTextureBehaviour : MonoBehaviour, IVideoPlaybackInstance
                 options = iphoneOptions;
                 break;
         }
+
+        if (!string.IsNullOrEmpty(additionalSource))
+            options.SetValue("--input-slave", additionalSource);
 
         mediaPlayer = new MediaPlayer(this, null as GameObject[], options, outputSampleRate);
 
