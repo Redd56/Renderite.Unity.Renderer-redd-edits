@@ -24,6 +24,7 @@ public class UMPVideoTextureBehaviour : MonoBehaviour, IVideoPlaybackInstance
     MediaPlayerStandalone standalonePlayer;
 
     string dataSource;
+    string additionalSource;
 
     public UnityEngine.Texture Texture => _texture;
 
@@ -96,13 +97,13 @@ public class UMPVideoTextureBehaviour : MonoBehaviour, IVideoPlaybackInstance
             _initialized = true;
     }
 
-    public IEnumerator Setup(VideoTextureAsset asset, string dataSource, int audioSystemSampleRate)
+    public IEnumerator Setup(VideoTextureAsset asset, string dataSource, string additionalSource, int audioSystemSampleRate)
     {
-        Debug.Log("Preparing UMP: " + dataSource + $", AssetId: {asset.AssetId}");
+        Debug.Log($"Preparing UMP: {dataSource} (Additional: {additionalSource}), AssetId: {asset.AssetId}");
 
         sampleRate = audioSystemSampleRate;
 
-        InitializePlayer(audioSystemSampleRate);
+        InitializePlayer(additionalSource, audioSystemSampleRate);
 
         this.asset = asset;
         this.dataSource = dataSource;
@@ -128,9 +129,12 @@ public class UMPVideoTextureBehaviour : MonoBehaviour, IVideoPlaybackInstance
         }
     }
 
-    void InitializePlayer(int outputSampleRate)
+    void InitializePlayer(string additionalSource, int outputSampleRate)
     {
         PlayerOptions options = new PlayerOptions(null);
+
+        if(!string.IsNullOrEmpty(additionalSource))
+            options.SetValue("--input-slave", additionalSource);
 
         switch (UMPSettings.RuntimePlatform)
         {
