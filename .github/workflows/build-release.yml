@@ -56,21 +56,34 @@ jobs:
         working-directory: 'UnityRuntime'
         run: rm -rf Assets/UniversalMediaPlayer
 
-      - name: 'Install Unity'
-        uses: buildalon/unity-setup@ab626823a2d32033d5a7811169d0ce92e8010d38 # v2.3.0
-        id: unity-setup
+      - name: 'Pull Unity from cache'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          unity-version: '2019.4.19f1'
-          modules: |
-            windows-mono
-          cache-installation: 'true'
+          key: unity-setup-linux-2019.4.19f1-windows-mono
+          path: /home/runner/Unity/Hub/Editor
+
+      - name: 'Install Unity'
+        continue-on-error: true
+        run: |
+          curl -sL https://hub.unity3d.com/linux/keys/public | sudo gpg --dearmor -o /usr/share/keyrings/Unity_Technologies_ApS.gpg
+          sudo tee /etc/apt/sources.list.d/unity-cli.sources <<'EOF'
+          Types: deb
+          URIs: https://hub.unity3d.com/linux/repos/deb
+          Suites: unstable
+          Components: main
+          Signed-By: /usr/share/keyrings/Unity_Technologies_ApS.gpg
+          EOF
+
+          sudo apt-get update && sudo apt-get install -y unity-cli
+
+          unity editors -i
+          unity install 2019.4.19f1 -a x86_64 -m windows-mono --cm
 
       - name: 'Activate Unity license'
-        uses: buildalon/activate-unity-license@ed044477f266bebc3b0bc5270ac3b29782e76116 # v2.1.0
-        with:
-          license: 'personal'
-          username: '${{ secrets.UNITY_CI_USERNAME }}'
-          password: '${{ secrets.UNITY_CI_PASSWORD }}'
+        env:
+          UNITY_SERVICE_ACCOUNT_ID: '${{ secrets.UNITY_CI_ACCOUNT_ID }}'
+          UNITY_SERVICE_ACCOUNT_SECRET: '${{ secrets.UNITY_CI_ACCOUNT_KEY }}'
+        run: unity auth
 
       - name: 'Build Unity Runtime'
         run: ${{ steps.unity-setup.outputs.unity-editor-path }} -quit -batchmode -nographics -projectPath UnityRuntime/ -buildTarget StandaloneWindows64 -executeMethod AppBuilder.BuildWindows
